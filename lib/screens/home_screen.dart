@@ -177,23 +177,23 @@ class _HomeScreenState extends State<HomeScreen>
                         constraints: BoxConstraints(
                           maxWidth: MediaQuery.of(context).size.width * 0.9,
                         ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            // 원본 가사
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 16),
-                              margin: const EdgeInsets.symmetric(vertical: 4),
-                              decoration: BoxDecoration(
-                                color: Colors.black,
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  color: Colors.white24,
-                                  width: 1,
-                                ),
-                              ),
-                              child: Text(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 16),
+                          margin: const EdgeInsets.symmetric(vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: Colors.blueAccent.withOpacity(0.3),
+                              width: 1,
+                            ),
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              // 원본 가사
+                              Text(
                                 lyricData.lyrics,
                                 style: const TextStyle(
                                   color: Colors.white70,
@@ -202,22 +202,15 @@ class _HomeScreenState extends State<HomeScreen>
                                 ),
                                 textAlign: TextAlign.center,
                               ),
-                            ),
-
-                            // 번역
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 16),
-                              margin: const EdgeInsets.symmetric(vertical: 4),
-                              decoration: BoxDecoration(
-                                color: Colors.blueAccent.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  color: Colors.blueAccent.withOpacity(0.3),
-                                  width: 1,
+                              const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 16),
+                                child: Divider(
+                                  color: Colors.white24,
+                                  height: 16,
                                 ),
                               ),
-                              child: Text(
+                              // 번역
+                              Text(
                                 lyricData.translation,
                                 style: const TextStyle(
                                   color: Colors.white,
@@ -226,8 +219,8 @@ class _HomeScreenState extends State<HomeScreen>
                                 ),
                                 textAlign: TextAlign.center,
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
