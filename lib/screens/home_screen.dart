@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
+import 'package:flutter/scheduler.dart';
 import '../services/dummy_service.dart';
 import '../services/translation_service.dart';
 import '../widgets/transparent_lyric_widget.dart';
@@ -89,12 +90,16 @@ class _HomeScreenState extends State<HomeScreen>
                   );
 
               // Use TranslationService for actual translation
-              _translationService.translate(lyricData.lyrics, 'en').then((translatedText) {
-                if (mounted) {
-                  print('원본 가사: ${lyricData.lyrics}');
-                  print('번역된 가사: ${translatedText}');
+              // _translationService.translate(lyricData.lyrics, 'en').then((translatedText) {
+              //   if (mounted) {
+              //     print('원본 가사: ${lyricData.lyrics}');
+              //     print('번역된 가사: ${translatedText}');
+              //   }
+              // });
 
-                  // FlutterOverlayWindow를 사용하여 오버레이 표시 및 데이터 전송
+              // 오버레이 업데이트를 빌드 주기 후로 지연
+              SchedulerBinding.instance.addPostFrameCallback((_) {
+                if (mounted) {
                   FlutterOverlayWindow.showOverlay(
                     height: 200,
                     width: 400,
@@ -105,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen>
                   );
                   FlutterOverlayWindow.shareData({
                     'lyric': lyricData.lyrics,
-                    'translation': translatedText,
+                    'translation': lyricData.translation,
                   });
                 }
               });
