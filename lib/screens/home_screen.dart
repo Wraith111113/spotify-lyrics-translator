@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import '../services/dummy_service.dart';
+import '../services/translation_service.dart';
+import '../widgets/transparent_lyric_widget.dart';
+import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,6 +15,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   final _spotifyService = DummySpotifyService();
+  final _translationService = TranslationService();
   bool _isLoading = false;
   String? _error;
   late AnimationController _animationController;
@@ -43,6 +47,7 @@ class _HomeScreenState extends State<HomeScreen>
   void dispose() {
     _spotifyService.dispose();
     _animationController.dispose();
+    FlutterOverlayWindow.closeOverlay();
     super.dispose();
   }
 
@@ -82,6 +87,28 @@ class _HomeScreenState extends State<HomeScreen>
                     lyrics: track.lyrics,
                     translation: track.translation,
                   );
+
+              // Use TranslationService for actual translation
+              _translationService.translate(lyricData.lyrics, 'en').then((translatedText) {
+                if (mounted) {
+                  print('원본 가사: ${lyricData.lyrics}');
+                  print('번역된 가사: ${translatedText}');
+
+                  // FlutterOverlayWindow를 사용하여 오버레이 표시 및 데이터 전송
+                  FlutterOverlayWindow.showOverlay(
+                    height: 200,
+                    width: 400,
+                    startPosition: OverlayPosition(0, MediaQuery.of(context).size.height - 200),
+                    overlayTitle: '가사 번역 중',
+                    overlayContent: lyricData.lyrics,
+                    enableDrag: true,
+                  );
+                  FlutterOverlayWindow.shareData({
+                    'lyric': lyricData.lyrics,
+                    'translation': translatedText,
+                  });
+                }
+              });
 
               return Stack(
                 children: [
@@ -154,7 +181,8 @@ class _HomeScreenState extends State<HomeScreen>
                     ),
                   ),
 
-                  // 가사와 번역 (화면 중앙)
+                  // 가사와 번역 (화면 중앙) - 중복으로 인해 주석 처리
+                  /*
                   Center(
                     child: AnimatedSwitcher(
                       duration: const Duration(milliseconds: 300),
@@ -225,6 +253,7 @@ class _HomeScreenState extends State<HomeScreen>
                       ),
                     ),
                   ),
+                  */
                 ],
               );
             },

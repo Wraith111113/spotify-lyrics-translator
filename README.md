@@ -126,3 +126,16 @@ GOOGLE_TRANSLATE_API_KEY=your_google_translate_api_key
 ```
 
 > 주의: `.env` 파일을 Git에 커밋하지 마세요. 이 파일은 `.gitignore`에 포함되어 있습니다.
+
+## 추가 라이브러리 및 개발 환경
+
+- overlay_support: 오버레이/알림/팝업 위젯 지원
+- flutter_overlay_window: 시스템 오버레이(윈도우/안드로이드 등) 지원
+
+## CI/CD
+
+- GitHub Actions를 통한 자동 빌드/테스트/배포 파이프라인 적용 예정
+
+## 라이센스
+
+- 본 프로젝트는 MIT 라이센스를 따릅니다. 자세한 내용은 LICENSE 파일을 참고하세요.

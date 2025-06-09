@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:dd2/screens/home_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:overlay_support/overlay_support.dart';
+import 'package:flutter_overlay_window/flutter_overlay_window.dart';
+import 'package:dd2/widgets/transparent_lyric_widget.dart';
 
 Future<void> main() async {
   try {
@@ -19,40 +22,51 @@ Future<void> main() async {
   }
 }
 
+// overlay entry point
+@pragma("vm:entry-point")
+void overlayMain() {
+  runApp(const MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: TransparentLyricWidget(lyric: "", translation: ""),
+  ));
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Spotify Lyrics Translator',
-      debugShowCheckedModeBanner: false, // 디버그 배너 제거
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-        brightness: Brightness.light,
-        useMaterial3: true, // Material 3 디자인 사용
-        // 앱 전체 테마 설정
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.green,
-          foregroundColor: Colors.white,
-          elevation: 0,
-        ),
-        // 버튼 테마 설정
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
+    return OverlaySupport(
+      child: MaterialApp(
+        title: 'Spotify Lyrics Translator',
+        debugShowCheckedModeBanner: false, // 디버그 배너 제거
+        theme: ThemeData(
+          primarySwatch: Colors.green,
+          brightness: Brightness.light,
+          useMaterial3: true, // Material 3 디자인 사용
+          // 앱 전체 테마 설정
+          appBarTheme: const AppBarTheme(
             backgroundColor: Colors.green,
             foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(
-              horizontal: 32,
-              vertical: 16,
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+            elevation: 0,
+          ),
+          // 버튼 테마 설정
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 32,
+                vertical: 16,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
           ),
         ),
+        home: const HomeScreen(),
       ),
-      home: const HomeScreen(),
     );
   }
 }
