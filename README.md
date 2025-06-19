@@ -139,3 +139,110 @@ GOOGLE_TRANSLATE_API_KEY=your_google_translate_api_key
 ## 라이센스
 
 - 본 프로젝트는 MIT 라이센스를 따릅니다. 자세한 내용은 LICENSE 파일을 참고하세요.
+- 
+
+Lyrics Translator App
+This is a Flutter application that displays and translates Spotify music lyrics in real-time.
+
+Project Overview
+This app shows the lyrics of the currently playing music in a UI similar to PAPAGO MINI, presenting them in a timeline format. Each lyric line is displayed along with its translation.
+
+Features
+Displays the currently playing song.
+Presents song lyrics in a timeline format.
+Provides translations for lyrics.
+Clean and intuitive PAPAGO MINI-style UI.
+Automatic lyric progression based on the timeline.
+Code and Structure Analysis
+1. Project Structure
+lib/: Contains core Dart code.
+main.dart: App entry point, defines app settings and theme.
+screens/: UI screen-related widgets.
+home_screen.dart: Main screen UI and state management.
+services/: Backend logic, data processing, API integration.
+dummy_service.dart: Provides hardcoded tracks and lyrics for demo mode.
+spotify_service.dart: (Unused) Spotify API integration.
+lyrics_service.dart: (Unused) Musixmatch API integration.
+translate_service.dart: (Unused) Google Translate API integration.
+pubspec.yaml: Project dependencies and app metadata.
+platform folders (android/, ios/, web/, etc.): Native code for each platform.
+.gitignore: List of files excluded from Git tracking.
+Other configuration files: .metadata, analysis_options.yaml, etc.
+2. Key File Analysis
+main.dart
+
+Sets up MaterialApp and designates HomeScreen as the home screen.
+Disables the debug banner.
+screens/home_screen.dart
+
+A StatefulWidget managing loading, error, initialization, and lyric change states.
+Directly instantiates and uses DummySpotifyService.
+Uses two StreamBuilder widgets to receive current track and lyric/translation streams.
+Implements lyric transition animations using AnimatedSwitcher, FadeTransition, and SlideTransition.
+UI style is similar to PAPAGO MINI.
+services/dummy_service.dart
+
+Hardcodes BTS 'Dynamite' and 'Spring Day' tracks.
+Manages LyricLine (lyric timeline).
+Sends track and lyric streams via StreamController.
+Changes lyrics every 3 seconds using Timer.periodic.
+Other Service Files
+
+Contains basic logic for actual API integration.
+Currently unused.
+Designed for secure API key management via flutter_dotenv.
+3. Structural Characteristics
+UI/Logic Separation: Distinct screens/ and services/ folders.
+State Management: Utilizes StatefulWidget + StreamBuilder.
+Demo Mode: Allows UI testing without actual API integration.
+API Key Management: Securely separates API keys using an .env file.
+Backend Necessity Review
+1. No Backend Needed in Current Structure
+As the current structure hardcodes data (lyrics, translations, track info) locally in dummy_service.dart,
+and the app streams data internally,
+there's no need for a separate server to send or receive data.
+In other words, it's currently a completely client-side app.
+
+2. However, Expanding Functionality May Require a Backend
+A backend may become necessary under the following scenarios:
+
+Scenario	Description	Backend Needed?
+Actual Spotify Integration	User-specific login, token management, fetching currently playing song.	Yes (May require Spotify authentication server)
+Fetching Real Musixmatch Lyrics	If lyrics are retrieved via API, API requests and key management are needed.	Yes (Safer to route through a server for security)
+Using Google Translate API	For real-time translation requests.	Yes (Server may be needed to protect API keys)
+Storing User-Specific Data	Saving user's favorite lyrics, managing history, etc.	Yes (Requires a database)
+Expanding to Paid Services	Implementing payment and subscription systems.	Absolutely Yes
+
+Export to Sheets
+3. Conclusion
+For its current state (demo/development/feature testing), a Flutter app without a backend is sufficient.
+However, for actual deployment, considering API key protection, user management, and data storage, building a backend will be necessary.
+For API key protection alone, when using commercial APIs like Google Translate or Musixmatch, it is standard security practice to use a backend server as an intermediary rather than calling them directly from Flutter. (Even if you put keys in .env in Flutter, they can be exposed when the app is built.)
+
+Possible Backend Implementation Approaches
+Firebase-based: Implementing authentication, database, and API proxy via Cloud Functions.
+Lightweight Node.js Server: An Express-based server for API proxy and user management.
+Serverless Architecture: Utilizing AWS Lambda + API Gateway for a scalable backend.
+Installation and Running
+Clone the repository:
+git clone https://github.com/Wraith111113/spotify-lyrics-translator.git
+Install dependencies:
+flutter pub get
+Run the app:
+flutter run
+Environment Setup
+To integrate with actual APIs, create a .env file and configure the following API keys:
+
+SPOTIFY_CLIENT_ID=your_spotify_client_id
+SPOTIFY_CLIENT_SECRET=your_spotify_client_secret
+MUSIXMATCH_API_KEY=your_musixmatch_api_key
+GOOGLE_TRANSLATE_API_KEY=your_google_translate_api_key
+Note: Do not commit the .env file to Git. It is included in .gitignore.
+
+Additional Libraries and Development Environment
+overlay_support: Supports overlay/notification/popup widgets.
+flutter_overlay_window: Supports system overlays (e.g., Windows/Android).
+CI/CD
+Automated build/test/deployment pipeline via GitHub Actions is planned.
+License
+This project is licensed under the MIT License. Refer to the LICENSE file for more details.
