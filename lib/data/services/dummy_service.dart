@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import '../../domain/entities/lyric_data.dart';
 
 class DummySpotifyService {
   final _dummyTracks = [
-    DummyTrack(title: 'Dynamite', artist: 'BTS', lyricsTimeline: [
+    DummyTrack(id: '1', title: 'Dynamite', artist: 'BTS', albumArtUrl: '', lyricsTimeline: [
       LyricLine(
           text: 'Cause I-I-I\'m in the stars tonight',
           startTime: 0,
@@ -32,7 +33,7 @@ class DummySpotifyService {
       LyricLine(text: '집으로 걸어갈 때 노래를 불러', startTime: 18, endTime: 21),
       LyricLine(text: '르브론처럼 정상에 올라', startTime: 21, endTime: 24),
     ]),
-    DummyTrack(title: '봄날', artist: 'BTS', lyricsTimeline: [
+    DummyTrack(id: '2', title: '봄날', artist: 'BTS', albumArtUrl: '', lyricsTimeline: [
       LyricLine(text: '보고 싶다 이렇게 말하니까 더', startTime: 0, endTime: 3),
       LyricLine(text: '보고 싶다 너희 사진을 보고 있어도', startTime: 3, endTime: 6),
       LyricLine(text: '보고 싶다 너무 야속한 시간', startTime: 6, endTime: 9),
@@ -65,6 +66,15 @@ class DummySpotifyService {
           text: 'There are still too many days to forget you',
           startTime: 21,
           endTime: 24),
+    ]),
+    DummyTrack(id: '3', title: 'Lover Boy', artist: 'Phum Viphurit', albumArtUrl: '', lyricsTimeline: [
+      LyricLine(text: 'เธอคือความฝันที่ฉันตามหา', startTime: 0, endTime: 3),
+      LyricLine(text: 'ในวันที่ฟ้าหม่นหมอง', startTime: 3, endTime: 6),
+      LyricLine(text: 'เธอคือแสงสว่างในใจ', startTime: 6, endTime: 9),
+    ], translationTimeline: [
+      LyricLine(text: 'You are the dream that I have been searching for,', startTime: 0, endTime: 3),
+      LyricLine(text: 'On days when the sky is gloomy,', startTime: 3, endTime: 6),
+      LyricLine(text: 'You are the light in my heart.', startTime: 6, endTime: 9),
     ]),
   ];
 
@@ -147,14 +157,18 @@ class CurrentLyricData {
 }
 
 class DummyTrack {
+  final String id;
   final String title;
   final String artist;
+  final String albumArtUrl;
   final List<LyricLine> lyricsTimeline;
   final List<LyricLine> translationTimeline;
 
   DummyTrack({
+    required this.id,
     required this.title,
     required this.artist,
+    required this.albumArtUrl,
     required this.lyricsTimeline,
     required this.translationTimeline,
   });
@@ -162,16 +176,4 @@ class DummyTrack {
   String get lyrics => lyricsTimeline.isNotEmpty ? lyricsTimeline[0].text : '';
   String get translation =>
       translationTimeline.isNotEmpty ? translationTimeline[0].text : '';
-}
-
-class LyricLine {
-  final String text;
-  final int startTime; // 시작 시간 (초)
-  final int endTime; // 종료 시간 (초)
-
-  LyricLine({
-    required this.text,
-    required this.startTime,
-    required this.endTime,
-  });
 }
