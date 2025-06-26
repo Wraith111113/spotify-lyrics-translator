@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:flutter/scheduler.dart';
-import 'package:dd2/presentation/widgets/transparent_lyric_widget.dart';
+import '../widgets/transparent_lyric_widget.dart';
 import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/spotify_bloc.dart';
@@ -51,18 +51,51 @@ class _HomeScreenState extends State<HomeScreen>
                 children: [
                   CircularProgressIndicator(),
                   SizedBox(height: 16),
-                  Text('데이터를 불러오는 중...'),
+                  Text('Spotify 연결 중...', style: TextStyle(color: Colors.white)),
                 ],
               ),
             );
           } else if (state is SpotifyError) {
-            return Center(child: Text('오류: ${state.message}'));
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, color: Colors.red, size: 48),
+                  const SizedBox(height: 16),
+                  Text('오류: ${state.message}', 
+                       style: const TextStyle(color: Colors.white)),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      context.read<SpotifyBloc>().add(LoadCurrentTrack());
+                    },
+                    child: const Text('다시 시도'),
+                  ),
+                ],
+              ),
+            );
+          } else if (state is SpotifyNoTrack) {
+            return const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.music_note, color: Colors.grey, size: 48),
+                  SizedBox(height: 16),
+                  Text('재생 중인 곡이 없습니다', 
+                       style: TextStyle(color: Colors.grey)),
+                  SizedBox(height: 8),
+                  Text('Spotify에서 음악을 재생해주세요', 
+                       style: TextStyle(color: Colors.grey, fontSize: 12)),
+                ],
+              ),
+            );
           } else if (state is SpotifyLoaded) {
+            final currentTrack = state.currentTrack;
             final currentLyric = state.currentLyric;
             final currentTranslation = state.currentTranslation;
 
             SchedulerBinding.instance.addPostFrameCallback((_) {
-              if (mounted) {
+              if (mounted && currentLyric.isNotEmpty) {
                 FlutterOverlayWindow.showOverlay(
                   height: 200,
                   width: 400,
@@ -87,28 +120,59 @@ class _HomeScreenState extends State<HomeScreen>
                 Positioned(
                   top: 16,
                   left: 16,
-                  child: Row(
-                    children: [
-                      Text(
-                        '현재 트랙 (BLoC)',
-                        style: const TextStyle(
-                          color: Colors.white70,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
+                  right: 16,
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade900.withOpacity(0.8),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        if (currentTrack.albumArtUrl.isNotEmpty)
+                          Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(4),
+                              image: DecorationImage(
+                                image: NetworkImage(currentTrack.albumArtUrl),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                currentTrack.title,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text(
+                                currentTrack.artist,
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 12,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      GestureDetector(
-                        onTap: () {
-                          context.read<SpotifyBloc>().add(NextTrack());
-                        },
-                        child: const Icon(
-                          Icons.skip_next,
-                          color: Colors.white70,
-                          size: 16,
+                        Icon(
+                          currentTrack.isPlaying ? Icons.pause : Icons.play_arrow,
+                          color: Colors.white,
+                          size: 20,
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
 
@@ -173,37 +237,49 @@ class _HomeScreenState extends State<HomeScreen>
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
-                              currentLyric,
-                              style: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w400,
+                            if (currentLyric.isNotEmpty) ...[
+                              Text(
+                                currentLyric,
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                textAlign: TextAlign.center,
+                                softWrap: true,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 3,
                               ),
-                              textAlign: TextAlign.center,
-                              softWrap: true,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 16),
-                              child: Divider(
-                                color: Colors.white24,
-                                height: 16,
+                              if (currentTranslation.isNotEmpty) ...[
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 16),
+                                  child: Divider(
+                                    color: Colors.white24,
+                                    height: 16,
+                                  ),
+                                ),
+                                Text(
+                                  currentTranslation,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  softWrap: true,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 3,
+                                ),
+                              ],
+                            ] else ...[
+                              const Text(
+                                '가사를 불러오는 중...',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 16,
+                                ),
                               ),
-                            ),
-                            Text(
-                              currentTranslation,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              textAlign: TextAlign.center,
-                              softWrap: true,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
-                            ),
+                            ],
                           ],
                         ),
                       ),

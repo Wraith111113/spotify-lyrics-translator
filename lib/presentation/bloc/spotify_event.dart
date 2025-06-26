@@ -12,4 +12,10 @@ class UpdateLyric extends SpotifyEvent {
   UpdateLyric(this.lyric, this.translation);
 }
 
-class NextTrack extends SpotifyEvent {} 
+class NextTrack extends SpotifyEvent {}
+
+class TrackChanged extends SpotifyEvent {
+  final SpotifyTrack track;
+
+  TrackChanged(this.track);
+} 

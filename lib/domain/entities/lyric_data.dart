@@ -18,14 +18,23 @@ class LyricLine extends Equatable {
 }
 
 class LyricData extends Equatable {
-  final List<LyricLine> lines;
+  final String lyrics;
+  final String translation;
+  final DateTime timestamp;
 
   const LyricData({
-    required this.lines,
+    required this.lyrics,
+    required this.translation,
+    required this.timestamp,
   });
 
   @override
-  List<Object> get props => [lines];
+  List<Object?> get props => [lyrics, translation, timestamp];
+
+  @override
+  String toString() {
+    return 'LyricData(lyrics: $lyrics, translation: $translation, timestamp: $timestamp)';
+  }
 }
 
 /// 원문과 번역 가사 리스트를 타임스탬프별로 싱크하여 반환
